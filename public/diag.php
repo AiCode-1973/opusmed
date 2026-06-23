@@ -4,10 +4,14 @@
  * ⚠ APAGUE ESTE ARQUIVO APÓS O USO!
  */
 
-// Força exibição de erros
+// Força exibição de erros ANTES de qualquer output
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
+
+// Sessão ANTES de qualquer output
+session_name('opusmed_sess');
+@session_start();
 
 // Proteção via POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_POST['key'] ?? '') !== 'opusdiag2026') {
@@ -106,6 +110,47 @@ if (!empty($_SESSION['usuario_id']) && !empty($_SESSION['perfil_id'])) {
     } catch (Exception $e) {
         echo '<span class="err">ERRO: ' . htmlspecialchars($e->getMessage()) . '</span><br>';
     }
+}
+
+// ── Teste direto de permissões (admin, perfil_id=1) ───────────
+echo '<h2>Teste direto: permissões do Administrador (perfil_id=1)</h2>';
+try {
+    if (!class_exists('Database')) require_once __DIR__ . '/../config/database.php';
+    $db2 = Database::getInstance()->getConnection();
+
+    // Lista módulos com suas permissões para perfil 1
+    $stmt = $db2->prepare('
+        SELECT m.nome, m.id AS modulo_id,
+               p.pode_ver, p.pode_criar, p.pode_editar, p.pode_excluir
+        FROM perfil_modulo_permissao p
+        INNER JOIN modulos m ON m.id = p.modulo_id
+        WHERE p.perfil_id = 1
+        ORDER BY m.ordem
+    ');
+    $stmt->execute();
+    $rows = $stmt->fetchAll();
+    if (empty($rows)) {
+        echo '<span class="err">NENHUMA permissão para perfil_id=1 — verifique o seed SQL</span><br>';
+    } else {
+        echo '<table border="1" cellpadding="6" style="border-collapse:collapse;font-size:.85rem">';
+        echo '<tr style="background:#f8fafc"><th>Módulo</th><th>ver</th><th>criar</th><th>editar</th><th>excluir</th><th>Hex nome</th></tr>';
+        foreach ($rows as $r) {
+            $hex = bin2hex($r['nome']);
+            echo "<tr><td>{$r['nome']}</td><td>{$r['pode_ver']}</td><td>{$r['pode_criar']}</td><td>{$r['pode_editar']}</td><td>{$r['pode_excluir']}</td><td style='font-size:.7rem'>{$hex}</td></tr>";
+        }
+        echo '</table>';
+
+        // Compara encoding do PHP com o do banco
+        echo '<br><b>Comparação de encoding (PHP vs DB):</b><br>';
+        $phpUsuarios   = 'Usuários';
+        $phpHex        = bin2hex($phpUsuarios);
+        $dbNome        = '';
+        foreach ($rows as $r) { if ($r['nome'] === $phpUsuarios) { $dbNome = $r['nome']; break; } }
+        echo "PHP 'Usuários' hex: <code>$phpHex</code><br>";
+        echo "Match no array: " . ($dbNome !== '' ? '<span class="ok">SIM — chave existe</span>' : '<span class="err">NÃO — encoding diferente!</span>') . '<br>';
+    }
+} catch (Exception $e) {
+    echo '<span class="err">ERRO: ' . htmlspecialchars($e->getMessage()) . '</span><br>';
 }
 
 // ── Erros PHP recentes ────────────────────────────────────────
