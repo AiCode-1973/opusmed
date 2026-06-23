@@ -246,6 +246,109 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
 .badge-orange { background: #fef3c7; color: #92400e; }
 .badge-red    { background: #fee2e2; color: #991b1b; }
 
+/* ── Botão toggle da sidebar ── */
+.btn-toggle-sidebar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 6px 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s;
+    flex-shrink: 0;
+}
+.btn-toggle-sidebar:hover { background: var(--bg); color: var(--primary); }
+.btn-toggle-sidebar svg { width: 20px; height: 20px; display: block; }
+
+/* ── Estado colapsado ── */
+:root { --sidebar-collapsed-w: 64px; }
+
+.sidebar-collapsed .sidebar {
+    width: var(--sidebar-collapsed-w);
+}
+
+.sidebar-collapsed .sidebar .logo-text,
+.sidebar-collapsed .sidebar .nav-section,
+.sidebar-collapsed .sidebar .user-info,
+.sidebar-collapsed .sidebar a span,
+.sidebar-collapsed .sidebar .btn-logout {
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar-collapsed .sidebar-logo {
+    justify-content: center;
+    padding: 20px 0 18px;
+}
+
+.sidebar-collapsed .sidebar-nav a {
+    justify-content: center;
+    padding: 12px 0;
+    gap: 0;
+}
+
+.sidebar-collapsed .sidebar-nav a svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar-collapsed .sidebar-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar-collapsed .sidebar-user {
+    flex-direction: column;
+    gap: 0;
+}
+
+.sidebar-collapsed .main-area {
+    margin-left: var(--sidebar-collapsed-w);
+}
+
+/* Animação suave */
+.sidebar,
+.main-area {
+    transition: width .25s ease, margin-left .25s ease, transform .25s ease;
+}
+
+.sidebar * {
+    transition: opacity .2s ease, width .2s ease;
+}
+
+/* Tooltip nos ícones quando colapsado */
+.sidebar-collapsed .sidebar-nav a {
+    position: relative;
+}
+
+.sidebar-collapsed .sidebar-nav a::after {
+    content: attr(data-label);
+    position: absolute;
+    left: calc(var(--sidebar-collapsed-w) + 8px);
+    background: #1e293b;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: .8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-6px);
+    transition: opacity .15s, transform .15s;
+    z-index: 300;
+}
+
+.sidebar-collapsed .sidebar-nav a:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 /* ── Responsivo ── */
 @media (max-width: 768px) {
     .sidebar { transform: translateX(-100%); }
