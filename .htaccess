@@ -1,0 +1,19 @@
+# OpusMed — raiz/.htaccess
+# Bloqueia acesso web direto a pastas sensíveis
+
+# Impede listagem de diretórios
+Options -Indexes
+
+# Bloqueia acesso a app/, config/, database/ diretamente via HTTP
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloqueia acesso direto às pastas internas
+    RewriteRule ^(app|config|database)(/|$) - [F,L]
+</IfModule>
+
+# Bloqueia acesso a arquivos sensíveis na raiz
+<FilesMatch "\.(sql|log|env|sh|bak|git|md)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

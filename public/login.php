@@ -1,5 +1,11 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/config.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_name(SESSION_NAME);
+    ini_set('session.gc_maxlifetime', SESSION_LIFETIME);
+    session_set_cookie_params(SESSION_LIFETIME);
+    session_start();
+}
 
 // Redireciona se já estiver logado
 if (!empty($_SESSION['usuario_id'])) {
@@ -7,6 +13,7 @@ if (!empty($_SESSION['usuario_id'])) {
     exit;
 }
 
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../app/models/Usuario.php';
 
 $erro = '';

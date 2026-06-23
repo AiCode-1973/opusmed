@@ -1,11 +1,6 @@
 <?php
 
-define('DB_HOST', '69.49.241.25');
-define('DB_USER', 'apassa73_opusmed');
-define('DB_PASS', 'Dema@1973');
-define('DB_NAME', 'apassa73_opusmed');
-define('DB_PORT', 3306);
-define('DB_CHARSET', 'utf8mb4');
+require_once __DIR__ . '/config.php';
 
 class Database {
     private static $instance = null;
@@ -29,14 +24,14 @@ class Database {
         $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
     }
 
-    public static function getInstance(): self {
+    public static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function getConnection(): PDO {
+    public function getConnection() {
         return $this->pdo;
     }
 }

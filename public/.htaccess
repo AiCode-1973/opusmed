@@ -1,0 +1,48 @@
+# OpusMed — public/.htaccess
+# Segurança e configurações do Apache para a pasta pública
+
+Options -Indexes -ExecCGI
+ServerSignature Off
+
+# ── PHP: exibe erros apenas em localhost ──────────────────────
+# php_flag  display_errors Off   # Descomente se necessário
+
+# ── Charset e compressão ──────────────────────────────────────
+AddDefaultCharset UTF-8
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript text/plain
+</IfModule>
+
+# ── Cache de assets estáticos ─────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css             "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/png            "access plus 30 days"
+    ExpiresByType image/jpeg           "access plus 30 days"
+    ExpiresByType image/svg+xml        "access plus 30 days"
+</IfModule>
+
+# ── Bloqueia acesso direto a arquivos sensíveis ───────────────
+<FilesMatch "\.(sql|log|env|ini|sh|bak|git)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Bloqueia acesso direto a includes ────────────────────────
+<FilesMatch "^(guard|sidebar|toggle_script)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Headers de segurança ──────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ── Redireciona index para login ──────────────────────────────
+DirectoryIndex login.php index.php index.html
