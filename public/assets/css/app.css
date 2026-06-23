@@ -360,6 +360,125 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
     transform: translateY(-50%) translateX(0);
 }
 
+/* ============================================================
+   CRUD — Botões, formulários, alertas
+   ============================================================ */
+
+/* Botões principais */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition: background .15s, box-shadow .15s, border-color .15s;
+    white-space: nowrap;
+}
+.btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); box-shadow: 0 3px 10px rgba(26,111,181,.3); }
+
+.btn-ghost { background: var(--white); color: var(--text); border-color: var(--border); }
+.btn-ghost:hover { background: var(--bg); }
+
+/* Botões de ação da tabela */
+.action-btns { display: flex; gap: 6px; align-items: center; }
+
+.btn-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: background .15s, transform .1s;
+    flex-shrink: 0;
+}
+.btn-icon:active { transform: scale(.93); }
+.btn-icon svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.btn-icon-blue   { background: #dbeafe; color: #1e40af; }
+.btn-icon-blue:hover   { background: #bfdbfe; }
+.btn-icon-orange { background: #fef3c7; color: #92400e; }
+.btn-icon-orange:hover { background: #fde68a; }
+.btn-icon-green  { background: #d1fae5; color: #065f46; }
+.btn-icon-green:hover  { background: #a7f3d0; }
+.btn-icon-red    { background: #fee2e2; color: #991b1b; }
+.btn-icon-red:hover    { background: #fecaca; }
+
+/* Avatar pequeno na tabela */
+.user-cell { display: flex; align-items: center; gap: 10px; }
+.user-avatar-sm {
+    width: 30px; height: 30px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+}
+
+/* Alertas */
+.alert {
+    padding: 13px 18px;
+    border-radius: 10px;
+    font-size: .88rem;
+    margin-bottom: 20px;
+    border: 1.5px solid transparent;
+}
+.alert-success { background: #f0fdf4; border-color: #86efac; color: #166534; }
+.alert-danger  { background: #fff5f5; border-color: #fc8181; color: #991b1b; }
+
+/* Formulários */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+}
+.form-grid-2 .full-width { grid-column: 1 / -1; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: .83rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    font-size: .92rem;
+    color: var(--text);
+    background: #f8fafc;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(26,111,181,.1);
+}
+
+.required { color: var(--danger); margin-left: 2px; }
+
+/* Campo senha com olho */
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 40px; }
+.toggle-pw {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); padding: 3px;
+    display: flex; align-items: center;
+    transition: color .15s;
+}
+.toggle-pw:hover { color: var(--primary); }
+.toggle-pw svg { width: 17px; height: 17px; }
+
 /* ── Responsivo ── */
 @media (max-width: 768px) {
     .sidebar { transform: translateX(-100%); }

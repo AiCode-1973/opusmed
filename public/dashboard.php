@@ -269,24 +269,8 @@ function atualizarRelogio() {
 }
 atualizarRelogio();
 setInterval(atualizarRelogio, 30000);
-
-// Toggle sidebar
-const sidebar   = document.getElementById('sidebar');
-const mainArea  = document.querySelector('.main-area');
-const btnToggle = document.getElementById('btnToggleSidebar');
-const COLLAPSED = 'sidebar-collapsed';
-
-// Restaura preferência salva
-if (localStorage.getItem('sidebarCollapsed') === '1') {
-    document.body.classList.add(COLLAPSED);
-}
-
-btnToggle.addEventListener('click', () => {
-    const isCollapsed = document.body.classList.toggle(COLLAPSED);
-    localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
-    btnToggle.setAttribute('aria-label', isCollapsed ? 'Expandir menu' : 'Recolher menu');
-});
 </script>
+<?php include __DIR__ . '/../app/views/toggle_script.php'; ?>
 
 </body>
 </html>
