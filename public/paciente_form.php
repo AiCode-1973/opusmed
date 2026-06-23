@@ -831,18 +831,13 @@ function maskTel(el) {
     const el = document.getElementById(id); if (el) maskTel(el);
 });
 
-// ── Máscara CEP ──────────────────────────────────────────────
-document.getElementById('cep').addEventListener('input', function () {
-    let v = this.value.replace(/\D/g, '').substring(0, 8);
-    if (v.length > 5) v = v.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
-    this.value = v;
-});
+// ── Máscara CEP + busca automática ──────────────────────────
+const cepIconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 
-// ── Busca CEP (ViaCEP) ───────────────────────────────────────
-document.getElementById('btnBuscarCep').addEventListener('click', function () {
-    const cep = document.getElementById('cep').value.replace(/\D/g, '');
-    if (cep.length !== 8) { alert('CEP inválido. Digite 8 dígitos.'); return; }
-    this.textContent = '...';
+function buscarCep(cep) {
+    const btn = document.getElementById('btnBuscarCep');
+    btn.innerHTML = '<span style="font-size:.8rem">...</span>';
+    btn.disabled = true;
     fetch('https://viacep.com.br/ws/' + cep + '/json/')
         .then(r => r.json())
         .then(d => {
@@ -856,11 +851,24 @@ document.getElementById('btnBuscarCep').addEventListener('click', function () {
             }
             document.getElementById('numero').focus();
         })
-        .catch(() => alert('Erro ao buscar CEP.'))
+        .catch(() => alert('Erro ao buscar CEP. Verifique sua conexão.'))
         .finally(() => {
-            const b = document.getElementById('btnBuscarCep');
-            b.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+            btn.innerHTML = cepIconSvg;
+            btn.disabled = false;
         });
+}
+
+document.getElementById('cep').addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').substring(0, 8);
+    if (v.length > 5) v = v.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
+    this.value = v;
+    if (v.replace(/\D/g, '').length === 8) buscarCep(v.replace(/\D/g, ''));
+});
+
+document.getElementById('btnBuscarCep').addEventListener('click', function () {
+    const cep = document.getElementById('cep').value.replace(/\D/g, '');
+    if (cep.length !== 8) { alert('CEP inválido. Digite 8 dígitos.'); return; }
+    buscarCep(cep);
 });
 
 // ── LGPD: auto-preenche data/hora ao marcar consentimento ────
