@@ -265,74 +265,84 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
 .btn-toggle-sidebar:hover { background: var(--primary); color: #fff; }
 .btn-toggle-sidebar svg { width: 20px; height: 20px; display: block; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
+/* ── Animação suave (sempre ativa) ── */
+.sidebar      { transition: width .25s ease, transform .25s ease; }
+.main-area    { transition: margin-left .25s ease; }
+.sidebar-nav a span,
+.sidebar .logo-text,
+.sidebar .nav-section,
+.sidebar .user-info,
+.sidebar .btn-logout { transition: opacity .2s ease, max-width .25s ease; }
+
 /* ── Estado colapsado ── */
 :root { --sidebar-collapsed-w: 64px; }
 
 .sidebar-collapsed .sidebar {
     width: var(--sidebar-collapsed-w);
+    overflow: hidden;
 }
 
+/* Esconde textos */
 .sidebar-collapsed .sidebar .logo-text,
 .sidebar-collapsed .sidebar .nav-section,
 .sidebar-collapsed .sidebar .user-info,
-.sidebar-collapsed .sidebar a span,
+.sidebar-collapsed .sidebar-nav a span,
 .sidebar-collapsed .sidebar .btn-logout {
     opacity: 0;
-    pointer-events: none;
-    width: 0;
+    max-width: 0;
     overflow: hidden;
+    pointer-events: none;
     white-space: nowrap;
 }
 
+/* Centraliza logo */
 .sidebar-collapsed .sidebar-logo {
     justify-content: center;
-    padding: 20px 0 18px;
+    padding: 20px 13px 18px;
 }
 
+/* Centraliza links */
 .sidebar-collapsed .sidebar-nav a {
     justify-content: center;
-    padding: 12px 0;
+    padding: 13px 0;
     gap: 0;
+    border-left: 3px solid transparent;
 }
-
+.sidebar-collapsed .sidebar-nav a.active {
+    border-left-color: var(--primary);
+}
 .sidebar-collapsed .sidebar-nav a svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 }
 
+/* Rodapé */
 .sidebar-collapsed .sidebar-footer {
     display: flex;
     justify-content: center;
+    padding: 16px 0;
 }
-
 .sidebar-collapsed .sidebar-user {
     flex-direction: column;
+    align-items: center;
     gap: 0;
 }
 
+/* Ajusta área principal */
 .sidebar-collapsed .main-area {
     margin-left: var(--sidebar-collapsed-w);
 }
 
-/* Animação suave */
-.sidebar,
-.main-area {
-    transition: width .25s ease, margin-left .25s ease, transform .25s ease;
-}
-
-.sidebar * {
-    transition: opacity .2s ease, width .2s ease;
-}
-
 /* Tooltip nos ícones quando colapsado */
-.sidebar-collapsed .sidebar-nav a {
-    position: relative;
-}
+.sidebar-nav a { position: relative; }
 
 .sidebar-collapsed .sidebar-nav a::after {
     content: attr(data-label);
     position: absolute;
-    left: calc(var(--sidebar-collapsed-w) + 8px);
+    left: calc(var(--sidebar-collapsed-w) + 6px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
     background: #1e293b;
     color: #fff;
     padding: 5px 10px;
@@ -341,14 +351,13 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transform: translateX(-6px);
     transition: opacity .15s, transform .15s;
     z-index: 300;
 }
 
 .sidebar-collapsed .sidebar-nav a:hover::after {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(-50%) translateX(0);
 }
 
 /* ── Responsivo ── */
