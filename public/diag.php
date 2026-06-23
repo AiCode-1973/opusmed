@@ -9,10 +9,21 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-// Proteção simples
-if (($_GET['key'] ?? '') !== 'opusdiag2026') {
-    http_response_code(403);
-    die('Acesso negado. Use ?key=opusdiag2026');
+// Proteção via POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_POST['key'] ?? '') !== 'opusdiag2026') {
+    echo '<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#f0f4f8;margin:0}
+    .box{background:#fff;padding:40px;border-radius:12px;border:1px solid #e2e8f0;text-align:center;min-width:300px}
+    input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;margin:12px 0;font-size:1rem;box-sizing:border-box}
+    button{width:100%;padding:10px;background:#1a6fb5;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
+    </style></head><body><div class="box">
+    <h2 style="margin-top:0">OpusMed Diagnóstico</h2>
+    <form method="POST">
+        <input type="password" name="key" placeholder="Senha de acesso" autofocus>
+        <button type="submit">Acessar</button>
+    </form>
+    </div></body></html>';
+    exit;
 }
 
 echo '<style>body{font-family:monospace;padding:20px;background:#f0f4f8}
