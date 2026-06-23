@@ -248,20 +248,22 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
 
 /* ── Botão toggle da sidebar ── */
 .btn-toggle-sidebar {
-    background: none;
-    border: none;
+    background: var(--primary-light);
+    border: 1.5px solid var(--border);
     cursor: pointer;
-    color: var(--muted);
-    padding: 6px 8px;
+    color: var(--primary);
+    padding: 8px 10px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background .15s, color .15s;
     flex-shrink: 0;
+    min-width: 38px;
+    min-height: 38px;
 }
-.btn-toggle-sidebar:hover { background: var(--bg); color: var(--primary); }
-.btn-toggle-sidebar svg { width: 20px; height: 20px; display: block; }
+.btn-toggle-sidebar:hover { background: var(--primary); color: #fff; }
+.btn-toggle-sidebar svg { width: 20px; height: 20px; display: block; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── Estado colapsado ── */
 :root { --sidebar-collapsed-w: 64px; }
