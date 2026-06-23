@@ -2,7 +2,7 @@
 // ── Guard de sessão ──────────────────────────────────────────
 session_start();
 if (empty($_SESSION['usuario_id'])) {
-    header('Location: /opusmed/public/login.php');
+    header('Location: login.php');
     exit;
 }
 

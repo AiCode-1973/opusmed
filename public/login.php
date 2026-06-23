@@ -3,7 +3,7 @@ session_start();
 
 // Redireciona se já estiver logado
 if (!empty($_SESSION['usuario_id'])) {
-    header('Location: /opusmed/public/dashboard.php');
+    header('Location: dashboard.php');
     exit;
 }
 
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['perfil_id']     = $usuario['perfil_id'];
             $_SESSION['perfil_nome']   = $usuario['perfil_nome'];
 
-            header('Location: /opusmed/public/dashboard.php');
+            header('Location: dashboard.php');
             exit;
         } else {
             $erro = 'E-mail ou senha inválidos.';
