@@ -25,7 +25,7 @@
         </a>
 
         <?php if (!empty($permissoes['Pacientes']['pode_ver'])): ?>
-        <a href="pacientes.php" data-label="Pacientes" <?= basename($_SERVER['PHP_SELF']) === 'pacientes.php' ? 'class="active"' : '' ?>>
+        <a href="pacientes.php" data-label="Pacientes" <?= in_array(basename($_SERVER['PHP_SELF']), ['pacientes.php','paciente_form.php','paciente_excluir.php']) ? 'class="active"' : '' ?>>
             <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Pacientes</span>
         </a>
