@@ -234,6 +234,7 @@ class Paciente {
 
     public function atualizar(int $id, array $dados): bool {
         $params = $this->_params($dados);
+        unset($params[':cadastrado_por']); // não atualiza quem criou
         $params[':id'] = $id;
 
         $stmt = $this->db->prepare('
