@@ -19,14 +19,14 @@ require_once __DIR__ . '/../app/models/Usuario.php';
 $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim(filter_input(INPUT_POST, 'email',  FILTER_SANITIZE_EMAIL) ?? '');
+    $cpf   = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
     $senha = $_POST['senha'] ?? '';
 
-    if ($email === '' || $senha === '') {
-        $erro = 'Preencha o e-mail e a senha.';
+    if ($cpf === '' || $senha === '') {
+        $erro = 'Preencha o CPF e a senha.';
     } else {
         $usuarioModel = new Usuario();
-        $usuario = $usuarioModel->autenticar($email, $senha);
+        $usuario = $usuarioModel->autenticarPorCpf($cpf, $senha);
 
         if ($usuario) {
             session_regenerate_id(true);
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: dashboard.php');
             exit;
         } else {
-            $erro = 'E-mail ou senha inválidos.';
+            $erro = 'CPF ou senha inválidos.';
         }
     }
 }
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="login-box">
 
             <h2>Bem-vindo de volta</h2>
-            <p class="subtitle">Informe suas credenciais para acessar o sistema.</p>
+            <p class="subtitle">Informe seu CPF e senha para acessar o sistema.</p>
 
             <?php if ($erro !== ''): ?>
             <div class="alert-error" role="alert">
@@ -110,23 +110,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form method="POST" action="" novalidate id="loginForm">
 
-                <!-- E-mail -->
+                <!-- CPF -->
                 <div class="form-group">
-                    <label for="email">E-mail</label>
+                    <label for="cpf">CPF</label>
                     <div class="input-wrapper">
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                            <polyline points="22,6 12,13 2,6"/>
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
                         </svg>
                         <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="seu@email.com.br"
-                            value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-                            autocomplete="email"
+                            type="text"
+                            id="cpf"
+                            name="cpf"
+                            placeholder="000.000.000-00"
+                            value="<?= htmlspecialchars($_POST['cpf'] ?? '') ?>"
+                            autocomplete="off"
+                            maxlength="14"
                             required
                         >
                     </div>
@@ -202,6 +203,15 @@ document.querySelectorAll('.toggle-password').forEach(btn => {
         input.type = isText ? 'password' : 'text';
         btn.setAttribute('aria-label', isText ? 'Mostrar senha' : 'Ocultar senha');
     });
+});
+
+// Máscara CPF: 000.000.000-00
+document.getElementById('cpf').addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').substring(0, 11);
+    if (v.length > 9)      v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+    else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+    else if (v.length > 3) v = v.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+    this.value = v;
 });
 
 // Desabilita botão ao submeter (evita duplo clique)

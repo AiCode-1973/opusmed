@@ -111,8 +111,37 @@ class Usuario {
     // Autenticação
     // -------------------------------------------------------
 
+    public function buscarPorCpf(string $cpf) {
+        $cpf = preg_replace('/\D/', '', $cpf); // remove pontos e traço
+        $stmt = $this->db->prepare('
+            SELECT u.*, p.nome AS perfil_nome
+            FROM usuarios u
+            INNER JOIN perfis p ON p.id = u.perfil_id
+            WHERE u.cpf = ?
+        ');
+        $stmt->execute([$cpf]);
+        return $stmt->fetch();
+    }
+
     public function autenticar(string $email, string $senha) {
         $usuario = $this->buscarPorEmail($email);
+
+        if (!$usuario || !$usuario['ativo']) {
+            return false;
+        }
+
+        if (!password_verify($senha, $usuario['senha'])) {
+            return false;
+        }
+
+        $this->registrarUltimoAcesso($usuario['id']);
+
+        unset($usuario['senha']);
+        return $usuario;
+    }
+
+    public function autenticarPorCpf(string $cpf, string $senha) {
+        $usuario = $this->buscarPorCpf($cpf);
 
         if (!$usuario || !$usuario['ativo']) {
             return false;

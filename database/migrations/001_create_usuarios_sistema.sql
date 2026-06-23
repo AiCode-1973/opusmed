@@ -169,7 +169,8 @@ FROM `modulos`;
 
 -- Usuário administrador padrão (senha: Admin@2026 — TROQUE IMEDIATAMENTE)
 -- Hash gerado com password_hash('Admin@2026', PASSWORD_BCRYPT)
-INSERT INTO `usuarios` (`perfil_id`, `nome`, `email`, `senha`) VALUES
-(1, 'Administrador', 'admin@opusmed.com.br', '$2y$12$SAL4.6IxY5zEue6u1zj1LuQDlXxb11jz/FN0r1AaNtGJNNZIeKeDu');
+-- CPF padrão: 000.000.000-00 (TROQUE IMEDIATAMENTE)
+INSERT INTO `usuarios` (`perfil_id`, `nome`, `email`, `cpf`, `senha`) VALUES
+(1, 'Administrador', 'admin@opusmed.com.br', '00000000000', '$2y$12$SAL4.6IxY5zEue6u1zj1LuQDlXxb11jz/FN0r1AaNtGJNNZIeKeDu');
 
 SET FOREIGN_KEY_CHECKS = 1;
