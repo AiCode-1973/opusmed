@@ -14,7 +14,7 @@ class Usuario {
     // Busca
     // -------------------------------------------------------
 
-    public function buscarPorId(int $id): array|false {
+    public function buscarPorId(int $id) {
         $stmt = $this->db->prepare('
             SELECT u.*, p.nome AS perfil_nome
             FROM usuarios u
@@ -25,7 +25,7 @@ class Usuario {
         return $stmt->fetch();
     }
 
-    public function buscarPorEmail(string $email): array|false {
+    public function buscarPorEmail(string $email) {
         $stmt = $this->db->prepare('
             SELECT u.*, p.nome AS perfil_nome
             FROM usuarios u
@@ -111,7 +111,7 @@ class Usuario {
     // Autenticação
     // -------------------------------------------------------
 
-    public function autenticar(string $email, string $senha): array|false {
+    public function autenticar(string $email, string $senha) {
         $usuario = $this->buscarPorEmail($email);
 
         if (!$usuario || !$usuario['ativo']) {

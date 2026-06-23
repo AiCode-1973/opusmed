@@ -19,7 +19,7 @@ class Perfil {
         return $this->db->query($sql)->fetchAll();
     }
 
-    public function buscarPorId(int $id): array|false {
+    public function buscarPorId(int $id) {
         $stmt = $this->db->prepare('SELECT * FROM perfis WHERE id = ?');
         $stmt->execute([$id]);
         return $stmt->fetch();

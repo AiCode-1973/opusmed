@@ -1,8 +1,11 @@
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 echo '<h3>Teste de includes</h3>';
+echo '<b>PHP:</b> ' . PHP_VERSION . '<br>';
+echo '<b>PHP >= 8.0:</b> ' . (version_compare(PHP_VERSION, '8.0.0', '>=') ? '✅ Sim' : '❌ NÃO — os models exigem PHP 8.0+') . '<br><br>';
 
 // 1. database.php
 if (file_exists(__DIR__ . '/../config/database.php')) {
