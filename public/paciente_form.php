@@ -713,8 +713,17 @@ $ufs    = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA'
                 <div id="tab8" class="tab-pane <?= $tabAtiva === 'tab8' ? 'active' : '' ?>">
                     <div class="tab-content">
 
-                        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:.88rem;color:#1e40af">
-                            <strong>Lei Geral de Proteção de Dados (LGPD)</strong> — As informações coletadas são utilizadas exclusivamente para a assistência à saúde do paciente, em conformidade com a Lei nº 13.709/2018.
+                        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:.88rem;color:#1e40af;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+                            <div>
+                                <strong>Lei Geral de Proteção de Dados (LGPD)</strong> — As informações coletadas são utilizadas exclusivamente para a assistência à saúde do paciente, em conformidade com a Lei nº 13.709/2018.
+                            </div>
+                            <?php if ($editando): ?>
+                            <a href="paciente_lgpd_termo.php?id=<?= $id ?>" target="_blank"
+                               style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#1a6fb5;color:#fff;border-radius:8px;text-decoration:none;font-size:.82rem;font-weight:600;white-space:nowrap;flex-shrink:0">
+                                <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                                Imprimir Termo LGPD
+                            </a>
+                            <?php endif; ?>
                         </div>
 
                         <div class="lgpd-checks">
