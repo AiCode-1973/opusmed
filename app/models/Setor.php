@@ -111,4 +111,8 @@ class Setor {
         $stmt->execute([$codigo, $ignorarId]);
         return $stmt->fetchColumn() > 0;
     }
+
+    public function excluir(int $id): bool {
+        return $this->db->prepare('DELETE FROM setores WHERE id = ?')->execute([$id]);
+    }
 }

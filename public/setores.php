@@ -17,6 +17,7 @@ $msgs = [
     'editado'    => 'Setor atualizado com sucesso.',
     'desativado' => 'Setor desativado.',
     'ativado'    => 'Setor reativado.',
+    'excluido'   => 'Setor excluído com sucesso.',
 ];
 ?>
 <!DOCTYPE html>
@@ -136,6 +137,12 @@ $msgs = [
                                             <?php else: ?>
                                             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                                             <?php endif; ?>
+                                        </a>
+                                        <a href="setor_delete.php?id=<?= $s['id'] ?>"
+                                           class="btn-icon btn-icon-red"
+                                           title="Excluir permanentemente"
+                                           onclick="return confirm('Excluir PERMANENTEMENTE o setor \'<?= htmlspecialchars(addslashes($s['nome'])) ?>\'? Esta ação não pode ser desfeita.')">
+                                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                                         </a>
                                         <?php endif; ?>
                                     </div>
