@@ -132,15 +132,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <!-- Categoria -->
                             <div class="form-group">
                                 <label class="form-label required">Categoria</label>
-                                <select name="categoria_id" class="form-control">
-                                    <option value="">Selecione…</option>
-                                    <?php foreach ($categorias as $cId => $cNome): ?>
-                                    <option value="<?= $cId ?>" <?= (int) $v['categoria_id'] === $cId ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($cNome) ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <small class="form-hint"><a href="categorias_setor.php" target="_blank" style="color:var(--primary)">Gerenciar categorias</a></small>
+                                <div class="input-addon">
+                                    <select id="selectCategoria" name="categoria_id" class="form-control">
+                                        <option value="">Selecione…</option>
+                                        <?php foreach ($categorias as $cId => $cNome): ?>
+                                        <option value="<?= $cId ?>" <?= (int) $v['categoria_id'] === $cId ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($cNome) ?>
+                                        </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?php if (pode('Categorias de Setores', 'pode_criar')): ?>
+                                    <button type="button" class="btn-addon" id="btnNovaCategoria" title="Nova categoria">
+                                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                                <span class="form-hint"><a href="categorias_setor.php" target="_blank" style="color:var(--primary)">Gerenciar categorias</a></span>
                             </div>
                         </div>
 
@@ -188,6 +195,125 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </main>
     </div>
 </div>
+
+<!-- ====================================================
+     Modal — Nova Categoria
+     ==================================================== -->
+<div class="modal-backdrop" id="modalCategoria" role="dialog" aria-modal="true" aria-labelledby="modalCatTitulo">
+    <div class="modal">
+        <div class="modal-header">
+            <h4 id="modalCatTitulo">Nova categoria de setor</h4>
+            <button type="button" class="modal-close" id="btnFecharModal" aria-label="Fechar">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-error" id="modalErro"></div>
+
+            <div class="form-group" style="margin-bottom:16px">
+                <label class="form-label required" for="modalNome">Nome da categoria</label>
+                <input type="text" id="modalNome" class="form-control"
+                       placeholder="Ex: UTI, Maternidade, Ambulatório…"
+                       maxlength="100" autocomplete="off">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+                <label class="form-label" for="modalDescricao">Descrição <span style="color:var(--muted);font-weight:400">(opcional)</span></label>
+                <textarea id="modalDescricao" class="form-control form-textarea" rows="2"
+                          placeholder="Descrição da categoria…"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" id="btnCancelarModal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btnSalvarCategoria">
+                <svg viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Salvar categoria
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const backdrop   = document.getElementById('modalCategoria');
+    const inputNome  = document.getElementById('modalNome');
+    const inputDesc  = document.getElementById('modalDescricao');
+    const erroDiv    = document.getElementById('modalErro');
+    const btnSalvar  = document.getElementById('btnSalvarCategoria');
+    const selectCat  = document.getElementById('selectCategoria');
+
+    function abrirModal() {
+        inputNome.value  = '';
+        inputDesc.value  = '';
+        erroDiv.style.display = 'none';
+        erroDiv.textContent   = '';
+        backdrop.classList.add('open');
+        setTimeout(() => inputNome.focus(), 150);
+    }
+
+    function fecharModal() {
+        backdrop.classList.remove('open');
+    }
+
+    document.getElementById('btnNovaCategoria')  && document.getElementById('btnNovaCategoria').addEventListener('click', abrirModal);
+    document.getElementById('btnFecharModal').addEventListener('click', fecharModal);
+    document.getElementById('btnCancelarModal').addEventListener('click', fecharModal);
+
+    // Fecha ao clicar fora
+    backdrop.addEventListener('click', function (e) {
+        if (e.target === backdrop) fecharModal();
+    });
+
+    // Fecha com Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && backdrop.classList.contains('open')) fecharModal();
+    });
+
+    // Enter no campo nome confirma
+    inputNome.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); btnSalvar.click(); }
+    });
+
+    btnSalvar.addEventListener('click', function () {
+        const nome = inputNome.value.trim();
+        if (!nome) {
+            erroDiv.textContent   = 'O nome da categoria é obrigatório.';
+            erroDiv.style.display = 'block';
+            inputNome.focus();
+            return;
+        }
+
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = 'Salvando…';
+
+        const body = new FormData();
+        body.append('nome',      nome);
+        body.append('descricao', inputDesc.value.trim());
+
+        fetch('categoria_setor_ajax.php', { method: 'POST', body })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    erroDiv.textContent   = data.msg || 'Erro ao salvar.';
+                    erroDiv.style.display = 'block';
+                    return;
+                }
+                // Adiciona a nova opção no select e seleciona
+                const opt = new Option(data.nome, data.id, true, true);
+                selectCat.add(opt);
+                selectCat.value = data.id;
+                fecharModal();
+            })
+            .catch(() => {
+                erroDiv.textContent   = 'Erro de comunicação. Tente novamente.';
+                erroDiv.style.display = 'block';
+            })
+            .finally(() => {
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar categoria';
+            });
+    });
+}());
+</script>
 
 <?php include __DIR__ . '/../app/views/toggle_script.php'; ?>
 </body>
