@@ -22,19 +22,22 @@ if ($editando) {
 
 $erros = [];
 $v     = [
-    'codigo'    => $reg['codigo']    ?? '',
-    'nome'      => $reg['nome']      ?? '',
-    'categoria' => $reg['categoria'] ?? '',
-    'descricao' => $reg['descricao'] ?? '',
-    'ativo'     => $reg ? (int) $reg['ativo'] : 1,
+    'codigo'      => $reg['codigo']      ?? '',
+    'nome'        => $reg['nome']        ?? '',
+    'categoria_id'=> $reg['categoria_id'] ?? '',
+    'descricao'   => $reg['descricao']   ?? '',
+    'ativo'       => $reg ? (int) $reg['ativo'] : 1,
 ];
 
+// Carrega categorias ativas do banco
+$categorias = $setorModel->listarCategorias();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $v['codigo']    = trim($_POST['codigo']    ?? '');
-    $v['nome']      = trim($_POST['nome']      ?? '');
-    $v['categoria'] = trim($_POST['categoria'] ?? '');
-    $v['descricao'] = trim($_POST['descricao'] ?? '');
-    $v['ativo']     = isset($_POST['ativo']) ? 1 : 0;
+    $v['codigo']      = trim($_POST['codigo']    ?? '');
+    $v['nome']        = trim($_POST['nome']      ?? '');
+    $v['categoria_id']= (int) ($_POST['categoria_id'] ?? 0);
+    $v['descricao']   = trim($_POST['descricao'] ?? '');
+    $v['ativo']       = isset($_POST['ativo']) ? 1 : 0;
 
     if ($v['codigo'] === '') {
         $erros[] = 'O código do setor é obrigatório.';
@@ -48,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = 'O nome do setor é obrigatório.';
     }
 
-    if ($v['categoria'] === '' || !isset(Setor::$categorias[$v['categoria']])) {
+    if ($v['categoria_id'] <= 0 || !isset($categorias[$v['categoria_id']])) {
         $erros[] = 'Selecione uma categoria válida.';
     }
 
@@ -129,14 +132,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <!-- Categoria -->
                             <div class="form-group">
                                 <label class="form-label required">Categoria</label>
-                                <select name="categoria" class="form-control">
+                                <select name="categoria_id" class="form-control">
                                     <option value="">Selecione…</option>
-                                    <?php foreach (Setor::$categorias as $val => $label): ?>
-                                    <option value="<?= htmlspecialchars($val) ?>" <?= $v['categoria'] === $val ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($label) ?>
+                                    <?php foreach ($categorias as $cId => $cNome): ?>
+                                    <option value="<?= $cId ?>" <?= (int) $v['categoria_id'] === $cId ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cNome) ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <small class="form-hint"><a href="categorias_setor.php" target="_blank" style="color:var(--primary)">Gerenciar categorias</a></small>
                             </div>
                         </div>
 

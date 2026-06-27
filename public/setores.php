@@ -4,11 +4,12 @@ exigirPermissao('Setores', 'pode_ver');
 
 require_once __DIR__ . '/../app/models/Setor.php';
 
-$busca     = trim($_GET['busca']     ?? '');
-$categoria = $_GET['categoria'] ?? '';
+$busca      = trim($_GET['busca'] ?? '');
+$categoriaId = (int) ($_GET['categoria_id'] ?? 0);
 
 $setorModel = new Setor();
-$setores    = $setorModel->listarComFiltro($busca, $categoria);
+$setores    = $setorModel->listarComFiltro($busca, $categoriaId);
+$categorias = $setorModel->listarCategorias();
 
 $msg  = $_GET['msg'] ?? '';
 $msgs = [
@@ -63,17 +64,17 @@ $msgs = [
                 <input type="text" name="busca" value="<?= htmlspecialchars($busca) ?>"
                        placeholder="Buscar por nome ou código..."
                        style="flex:1;min-width:220px;padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;background:#fff;outline:none">
-                <select name="categoria" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;background:#fff;outline:none">
+                <select name="categoria_id" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;background:#fff;outline:none">
                     <option value="">Todas as categorias</option>
-                    <?php foreach (array_keys(Setor::$categorias) as $cat): ?>
-                    <option value="<?= htmlspecialchars($cat) ?>" <?= $categoria === $cat ? 'selected' : '' ?>><?= htmlspecialchars($cat) ?></option>
+                    <?php foreach ($categorias as $cId => $cNome): ?>
+                    <option value="<?= $cId ?>" <?= $categoriaId === $cId ? 'selected' : '' ?>><?= htmlspecialchars($cNome) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <button type="submit" class="btn btn-ghost">
                     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     Buscar
                 </button>
-                <?php if ($busca !== '' || $categoria !== ''): ?>
+                <?php if ($busca !== '' || $categoriaId > 0): ?>
                 <a href="setores.php" class="btn btn-ghost">Limpar</a>
                 <?php endif; ?>
             </form>
@@ -108,7 +109,7 @@ $msgs = [
                                 </td>
                                 <td style="font-weight:600"><?= htmlspecialchars($s['nome']) ?></td>
                                 <td>
-                                    <span class="badge badge-blue"><?= htmlspecialchars($s['categoria']) ?></span>
+                                    <span class="badge badge-blue"><?= htmlspecialchars($s['categoria_nome'] ?? '—') ?></span>
                                 </td>
                                 <td style="font-size:.82rem;color:var(--muted)">
                                     <?= $s['descricao'] ? htmlspecialchars(mb_strimwidth($s['descricao'], 0, 60, '…')) : '—' ?>

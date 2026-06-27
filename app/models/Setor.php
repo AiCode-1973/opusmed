@@ -6,73 +6,78 @@ class Setor {
 
     private $db;
 
-    public static $categorias = [
-        'UTI'              => 'UTI',
-        'Enfermaria'       => 'Enfermaria',
-        'Centro Cirúrgico' => 'Centro Cirúrgico',
-        'Pronto-Socorro'   => 'Pronto-Socorro',
-        'Ambulatório'      => 'Ambulatório',
-        'Maternidade'      => 'Maternidade',
-        'Pediatria'        => 'Pediatria',
-        'Oncologia'        => 'Oncologia',
-        'Cardiologia'      => 'Cardiologia',
-        'Radiologia'       => 'Radiologia',
-        'Laboratório'      => 'Laboratório',
-        'Farmácia'         => 'Farmácia',
-        'Administrativo'   => 'Administrativo',
-        'Recepção'         => 'Recepção',
-        'Outros'           => 'Outros',
-    ];
-
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    /** Retorna categorias ativas do banco: [id => nome, ...] */
+    public function listarCategorias(): array {
+        $rows = $this->db->query("SELECT id, nome FROM categorias_setor WHERE ativo = 1 ORDER BY nome")->fetchAll();
+        $out  = [];
+        foreach ($rows as $r) {
+            $out[$r['id']] = $r['nome'];
+        }
+        return $out;
+    }
+
     public function listarTodos(bool $somenteAtivos = false): array {
-        $where = $somenteAtivos ? 'WHERE ativo = 1' : '';
+        $where = $somenteAtivos ? 'WHERE s.ativo = 1' : '';
         return $this->db->query("
-            SELECT * FROM setores $where ORDER BY categoria, nome
+            SELECT s.*, c.nome AS categoria_nome
+            FROM setores s
+            LEFT JOIN categorias_setor c ON c.id = s.categoria_id
+            $where
+            ORDER BY c.nome, s.nome
         ")->fetchAll();
     }
 
-    public function listarComFiltro(string $busca = '', string $categoria = ''): array {
+    public function listarComFiltro(string $busca = '', int $categoriaId = 0): array {
         $where  = ['1=1'];
         $params = [];
 
         if ($busca !== '') {
-            $where[] = '(nome LIKE :busca OR codigo LIKE :busca2)';
+            $where[] = '(s.nome LIKE :busca OR s.codigo LIKE :busca2)';
             $like = '%' . $busca . '%';
             $params[':busca']  = $like;
             $params[':busca2'] = $like;
         }
-        if ($categoria !== '') {
-            $where[] = 'categoria = :categoria';
-            $params[':categoria'] = $categoria;
+        if ($categoriaId > 0) {
+            $where[] = 's.categoria_id = :cat_id';
+            $params[':cat_id'] = $categoriaId;
         }
 
-        $sql  = 'SELECT * FROM setores WHERE ' . implode(' AND ', $where) . ' ORDER BY categoria, nome';
+        $sql  = 'SELECT s.*, c.nome AS categoria_nome
+                 FROM setores s
+                 LEFT JOIN categorias_setor c ON c.id = s.categoria_id
+                 WHERE ' . implode(' AND ', $where) . '
+                 ORDER BY c.nome, s.nome';
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
     public function buscarPorId(int $id) {
-        $stmt = $this->db->prepare('SELECT * FROM setores WHERE id = ?');
+        $stmt = $this->db->prepare('
+            SELECT s.*, c.nome AS categoria_nome
+            FROM setores s
+            LEFT JOIN categorias_setor c ON c.id = s.categoria_id
+            WHERE s.id = ?
+        ');
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
 
     public function criar(array $d): int {
         $stmt = $this->db->prepare('
-            INSERT INTO setores (codigo, nome, categoria, descricao, ativo)
-            VALUES (:codigo, :nome, :categoria, :descricao, :ativo)
+            INSERT INTO setores (codigo, nome, categoria_id, descricao, ativo)
+            VALUES (:codigo, :nome, :categoria_id, :descricao, :ativo)
         ');
         $stmt->execute([
-            ':codigo'    => trim($d['codigo']),
-            ':nome'      => trim($d['nome']),
-            ':categoria' => trim($d['categoria']),
-            ':descricao' => trim($d['descricao'] ?? '') ?: null,
-            ':ativo'     => (int) ($d['ativo'] ?? 1),
+            ':codigo'      => trim($d['codigo']),
+            ':nome'        => trim($d['nome']),
+            ':categoria_id'=> ($d['categoria_id'] != '' ? (int) $d['categoria_id'] : null),
+            ':descricao'   => trim($d['descricao'] ?? '') ?: null,
+            ':ativo'       => (int) ($d['ativo'] ?? 1),
         ]);
         return (int) $this->db->lastInsertId();
     }
@@ -80,20 +85,20 @@ class Setor {
     public function atualizar(int $id, array $d): bool {
         $stmt = $this->db->prepare('
             UPDATE setores SET
-                codigo    = :codigo,
-                nome      = :nome,
-                categoria = :categoria,
-                descricao = :descricao,
-                ativo     = :ativo
+                codigo      = :codigo,
+                nome        = :nome,
+                categoria_id= :categoria_id,
+                descricao   = :descricao,
+                ativo       = :ativo
             WHERE id = :id
         ');
         return $stmt->execute([
-            ':codigo'    => trim($d['codigo']),
-            ':nome'      => trim($d['nome']),
-            ':categoria' => trim($d['categoria']),
-            ':descricao' => trim($d['descricao'] ?? '') ?: null,
-            ':ativo'     => (int) ($d['ativo'] ?? 1),
-            ':id'        => $id,
+            ':codigo'      => trim($d['codigo']),
+            ':nome'        => trim($d['nome']),
+            ':categoria_id'=> ($d['categoria_id'] != '' ? (int) $d['categoria_id'] : null),
+            ':descricao'   => trim($d['descricao'] ?? '') ?: null,
+            ':ativo'       => (int) ($d['ativo'] ?? 1),
+            ':id'          => $id,
         ]);
     }
 
