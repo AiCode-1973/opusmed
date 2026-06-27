@@ -65,4 +65,11 @@ class CategoriaSetor {
         $stmt->execute([$id]);
         return (int) $stmt->fetchColumn();
     }
+
+    public function excluir(int $id): bool {
+        if ($this->contarSetores($id) > 0) {
+            return false; // bloqueado: há setores vinculados
+        }
+        return $this->db->prepare('DELETE FROM categorias_setor WHERE id = ?')->execute([$id]);
+    }
 }

@@ -13,6 +13,8 @@ $msgs = [
     'editado'    => 'Categoria atualizada com sucesso.',
     'desativado' => 'Categoria desativada.',
     'ativado'    => 'Categoria reativada.',
+    'excluido'   => 'Categoria excluída com sucesso.',
+    'vinculada'  => 'Não é possível excluir: há setores vinculados a esta categoria.',
 ];
 ?>
 <!DOCTYPE html>
@@ -58,7 +60,7 @@ $msgs = [
         <main class="page-content">
 
             <?php if ($msg !== '' && isset($msgs[$msg])): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($msgs[$msg]) ?></div>
+            <div class="alert <?= $msg === 'vinculada' ? 'alert-danger' : 'alert-success' ?>"><?= htmlspecialchars($msgs[$msg]) ?></div>
             <?php endif; ?>
 
             <div class="card" style="max-width:720px">
@@ -120,6 +122,14 @@ $msgs = [
                                             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                                             <?php endif; ?>
                                         </a>
+                                        <?php if ($total === 0): ?>
+                                        <a href="categoria_setor_delete.php?id=<?= $c['id'] ?>"
+                                           class="btn-icon btn-icon-red"
+                                           title="Excluir permanentemente"
+                                           onclick="return confirm('Excluir PERMANENTEMENTE a categoria \'<?= htmlspecialchars(addslashes($c['nome'])) ?>\'? Esta ação não pode ser desfeita.')">
+                                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                        </a>
+                                        <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
                                 </td>
