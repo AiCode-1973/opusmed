@@ -49,146 +49,149 @@ $temResponsavel = !empty($p['resp_nome']);
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 12pt;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9.5pt;
             color: #111;
-            background: #fff;
-            padding: 0;
+            background: #f0f4f8;
         }
 
         .page {
             width: 210mm;
             min-height: 297mm;
-            margin: 0 auto;
-            padding: 20mm 20mm 15mm;
+            margin: 10mm auto;
+            padding: 12mm 14mm 10mm;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,.12);
         }
 
         /* Cabeçalho */
         .header {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             border-bottom: 2px solid #1a6fb5;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
         }
         .header-logo {
-            width: 50px; height: 50px;
+            width: 36px; height: 36px;
             background: #1a6fb5;
-            border-radius: 10px;
+            border-radius: 7px;
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
-        .header-logo svg { width: 30px; height: 30px; stroke: #fff; fill: none; stroke-width: 2; }
+        .header-logo svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2; }
         .header-info { flex: 1; }
-        .header-info h1 { font-size: 16pt; color: #1a6fb5; letter-spacing: -.3px; }
+        .header-info h1 { font-size: 13pt; color: #1a6fb5; letter-spacing: -.3px; line-height: 1; }
         .header-info h1 span { color: #135494; }
-        .header-info p  { font-size: 9pt; color: #555; margin-top: 2px; }
-        .header-meta { text-align: right; font-size: 9pt; color: #555; }
+        .header-info p  { font-size: 7.5pt; color: #555; margin-top: 1px; }
+        .header-meta { text-align: right; font-size: 7.5pt; color: #555; line-height: 1.5; }
 
         /* Título do documento */
         .doc-title {
             text-align: center;
-            margin: 18px 0 6px;
-            font-size: 14pt;
+            margin: 8px 0 2px;
+            font-size: 11pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: .05em;
+            letter-spacing: .04em;
         }
         .doc-subtitle {
             text-align: center;
-            font-size: 9pt;
+            font-size: 7.5pt;
             color: #555;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         /* Seção */
-        .section { margin-bottom: 16px; }
+        .section { margin-bottom: 8px; }
         .section-title {
-            font-size: 10pt;
+            font-size: 7.5pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: .06em;
             color: #1a6fb5;
-            border-bottom: 1px solid #cce;
-            padding-bottom: 3px;
-            margin-bottom: 8px;
+            border-bottom: 1px solid #c7d8f0;
+            padding-bottom: 2px;
+            margin-bottom: 5px;
         }
 
         /* Dados em grade */
         .dados-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px 20px;
+            gap: 3px 16px;
         }
         .dados-grid .full { grid-column: 1 / -1; }
-        .dado-item { font-size: 10.5pt; }
-        .dado-item label { font-size: 8.5pt; color: #555; display: block; }
+        .dado-item { font-size: 9pt; line-height: 1.3; }
+        .dado-item label { font-size: 7pt; color: #666; display: block; }
         .dado-item span  { font-weight: bold; }
 
         /* Texto jurídico */
         .texto-juridico {
-            font-size: 10.5pt;
-            line-height: 1.65;
+            font-size: 8.5pt;
+            line-height: 1.45;
             text-align: justify;
         }
-        .texto-juridico p { margin-bottom: 10px; }
+        .texto-juridico p { margin-bottom: 4px; }
 
         /* Consentimentos */
-        .consent-list { list-style: none; margin: 6px 0 12px; }
+        .consent-list { list-style: none; margin: 4px 0; }
         .consent-list li {
             display: flex;
             align-items: flex-start;
-            gap: 10px;
-            padding: 6px 0;
-            border-bottom: 1px dashed #ddd;
-            font-size: 10.5pt;
+            gap: 7px;
+            padding: 4px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 8.5pt;
+            line-height: 1.3;
         }
         .consent-list li:last-child { border-bottom: none; }
         .check-box {
-            width: 14px; height: 14px;
+            width: 12px; height: 12px;
             border: 1.5px solid #333;
             border-radius: 2px;
             flex-shrink: 0;
-            margin-top: 2px;
+            margin-top: 1px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 10pt;
+            font-size: 8pt;
             font-weight: bold;
+            line-height: 1;
         }
         .check-box.checked { background: #1a6fb5; border-color: #1a6fb5; color: #fff; }
 
         /* Assinaturas */
         .assinaturas {
-            margin-top: 30px;
+            margin-top: 16px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 24px;
         }
         .assinatura-item { text-align: center; }
         .assinatura-linha {
             border-bottom: 1px solid #333;
-            margin-bottom: 5px;
-            height: 40px;
+            margin-bottom: 4px;
+            height: 32px;
         }
-        .assinatura-item p { font-size: 9pt; color: #333; }
+        .assinatura-item p { font-size: 7.5pt; color: #333; line-height: 1.4; }
 
         /* Rodapé */
         .footer {
-            margin-top: 20px;
+            margin-top: 10px;
             border-top: 1px solid #ccc;
-            padding-top: 8px;
-            font-size: 8.5pt;
-            color: #888;
+            padding-top: 5px;
+            font-size: 7pt;
+            color: #999;
             text-align: center;
         }
 
         /* Prontuário badge */
         .pront-badge {
-            font-size: 9pt;
+            font-size: 7.5pt;
             background: #e8f1fb;
             color: #1a6fb5;
-            padding: 3px 10px;
-            border-radius: 12px;
+            padding: 2px 7px;
+            border-radius: 10px;
             font-weight: bold;
         }
 
@@ -216,7 +219,18 @@ $temResponsavel = !empty($p['resp_nome']);
 
         @media print {
             .no-print { display: none; }
-            .page { padding: 15mm 18mm; }
+            body { background: #fff; }
+            .page {
+                width: 100%;
+                margin: 0;
+                padding: 10mm 12mm 8mm;
+                box-shadow: none;
+                min-height: auto;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
@@ -326,19 +340,10 @@ $temResponsavel = !empty($p['resp_nome']);
         <div class="texto-juridico">
             <p>
                 Eu, <strong><?= htmlspecialchars($p['nome']) ?></strong><?= $temResponsavel ? ', representado(a) por <strong>' . htmlspecialchars($p['resp_nome']) . '</strong>' : '' ?>,
-                na qualidade de titular dos dados pessoais, declaro ter sido informado(a), de forma clara e inequívoca,
-                sobre o tratamento dos meus dados pessoais e sensíveis pela <strong>OpusMed — Sistema de Gestão em Saúde</strong>,
-                na condição de Controladora, nos termos da <strong>Lei nº 13.709/2018 (LGPD)</strong>.
-            </p>
-            <p>
-                Estou ciente de que os dados coletados serão utilizados para fins assistenciais e de gestão de saúde,
-                incluindo identificação do paciente, agendamento de consultas, controle de prontuários, comunicação
-                com equipes de saúde e cumprimento de obrigações legais e regulatórias.
-            </p>
-            <p>
-                Fico ciente ainda de que posso, a qualquer momento, solicitar a confirmação da existência de tratamento,
-                acesso, correção, portabilidade, eliminação ou revogação deste consentimento, conforme art. 18 da LGPD,
-                mediante solicitação formal à Controladora.
+                titular dos dados pessoais, declaro ter sido informado(a), de forma clara e inequívoca, sobre o tratamento dos meus dados pessoais e sensíveis pela
+                <strong>OpusMed — Sistema de Gestão em Saúde</strong>, nos termos da <strong>Lei nº 13.709/2018 (LGPD)</strong>.
+                Estou ciente de que os dados serão utilizados para fins assistenciais, incluindo identificação, agendamento, prontuário e comunicação com equipes de saúde.
+                Fico ciente de que posso, a qualquer momento, solicitar acesso, correção, portabilidade, eliminação ou revogação deste consentimento, conforme art. 18 da LGPD.
             </p>
         </div>
     </div>
@@ -349,31 +354,19 @@ $temResponsavel = !empty($p['resp_nome']);
         <ul class="consent-list">
             <li>
                 <div class="check-box <?= $p['lgpd_consentimento'] ? 'checked' : '' ?>"><?= $p['lgpd_consentimento'] ? '✓' : '' ?></div>
-                <div>
-                    <strong>Tratamento de dados pessoais e de saúde para fins assistenciais</strong><br>
-                    <span style="font-size:9.5pt;color:#444">Autorizo o tratamento dos meus dados pessoais e registros de saúde para prestação de assistência médica e gestão do meu prontuário eletrônico.</span>
-                </div>
+                <div><strong>Tratamento de dados pessoais e de saúde para fins assistenciais</strong></div>
             </li>
             <li>
                 <div class="check-box <?= $p['lgpd_whatsapp'] ? 'checked' : '' ?>"><?= $p['lgpd_whatsapp'] ? '✓' : '' ?></div>
-                <div>
-                    <strong>Comunicação via WhatsApp</strong><br>
-                    <span style="font-size:9.5pt;color:#444">Autorizo o envio de lembretes de consultas, orientações e comunicados institucionais via WhatsApp.</span>
-                </div>
+                <div><strong>Comunicação via WhatsApp</strong> — lembretes, orientações e comunicados institucionais.</div>
             </li>
             <li>
                 <div class="check-box <?= $p['lgpd_sms'] ? 'checked' : '' ?>"><?= $p['lgpd_sms'] ? '✓' : '' ?></div>
-                <div>
-                    <strong>Comunicação via SMS</strong><br>
-                    <span style="font-size:9.5pt;color:#444">Autorizo o recebimento de mensagens SMS com informações sobre atendimentos e alertas de saúde.</span>
-                </div>
+                <div><strong>Comunicação via SMS</strong> — informações sobre atendimentos e alertas de saúde.</div>
             </li>
             <li>
                 <div class="check-box <?= $p['lgpd_email_consent'] ? 'checked' : '' ?>"><?= $p['lgpd_email_consent'] ? '✓' : '' ?></div>
-                <div>
-                    <strong>Comunicação via e-mail</strong><br>
-                    <span style="font-size:9.5pt;color:#444">Autorizo o envio de comunicações, resultados de exames e informativos por e-mail.</span>
-                </div>
+                <div><strong>Comunicação via e-mail</strong> — comunicações, resultados de exames e informativos.</div>
             </li>
         </ul>
 
@@ -385,12 +378,9 @@ $temResponsavel = !empty($p['resp_nome']);
     <!-- Assinatura -->
     <div class="section">
         <div class="section-title"><?= $temResponsavel ? '5' : '4' ?>. Assinatura</div>
-        <div class="texto-juridico">
-            <p>
-                Por ser verdade, firmo o presente Termo livremente, sem qualquer coação ou vício de vontade,
-                em <strong><?= $dataHoje ?></strong>.
-            </p>
-        </div>
+        <p class="texto-juridico" style="margin-bottom:14px">
+            Por ser verdade, firmo o presente Termo de livre e espontânea vontade, em <strong><?= $dataHoje ?></strong>.
+        </p>
 
         <div class="assinaturas">
             <div class="assinatura-item">
