@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card-header">
                         <h3>Dados do setor</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding:24px">
 
                         <div class="form-grid-2">
                             <!-- Código do setor -->
