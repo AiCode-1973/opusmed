@@ -185,6 +185,7 @@ class Paciente {
             ':lgpd_data_aceite'         => $d['lgpd_data_aceite']         ?? null,
             ':lgpd_responsavel_aceite'  => $d['lgpd_responsavel_aceite']  ?? null,
             ':lgpd_finalidade'          => $d['lgpd_finalidade']          ?? null,
+            ':lgpd_documento'           => $d['lgpd_documento']           ?? null,
         ];
     }
 
@@ -203,7 +204,7 @@ class Paciente {
                 convenio_matricula, convenio_plano, convenio_cod_beneficiario,
                 `status`, unidade, origem_cadastro, observacoes, cadastrado_por,
                 lgpd_consentimento, lgpd_whatsapp, lgpd_sms, lgpd_email_consent,
-                lgpd_data_aceite, lgpd_responsavel_aceite, lgpd_finalidade
+                lgpd_data_aceite, lgpd_responsavel_aceite, lgpd_finalidade, lgpd_documento
             ) VALUES (
                 :prontuario, :nome, :nome_social, :data_nascimento, :sexo_biologico, :genero,
                 :cpf, :rg, :rg_orgao, :cns, :nome_mae, :nome_pai, :estado_civil,
@@ -217,7 +218,7 @@ class Paciente {
                 :convenio_matricula, :convenio_plano, :convenio_cod_beneficiario,
                 :status, :unidade, :origem_cadastro, :observacoes, :cadastrado_por,
                 :lgpd_consentimento, :lgpd_whatsapp, :lgpd_sms, :lgpd_email_consent,
-                :lgpd_data_aceite, :lgpd_responsavel_aceite, :lgpd_finalidade
+                :lgpd_data_aceite, :lgpd_responsavel_aceite, :lgpd_finalidade, :lgpd_documento
             )
         ');
         $stmt->execute($this->_params($dados));
@@ -263,7 +264,7 @@ class Paciente {
                 lgpd_consentimento = :lgpd_consentimento, lgpd_whatsapp = :lgpd_whatsapp,
                 lgpd_sms = :lgpd_sms, lgpd_email_consent = :lgpd_email_consent,
                 lgpd_data_aceite = :lgpd_data_aceite, lgpd_responsavel_aceite = :lgpd_responsavel_aceite,
-                lgpd_finalidade = :lgpd_finalidade
+                lgpd_finalidade = :lgpd_finalidade, lgpd_documento = :lgpd_documento
             WHERE id = :id
         ');
         return $stmt->execute($params);

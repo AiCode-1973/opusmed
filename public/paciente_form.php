@@ -41,13 +41,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $wpp       = preg_replace('/\D/', '', $_POST['whatsapp']  ?? '') ?: null;
         $resp_tel  = preg_replace('/\D/', '', $_POST['resp_telefone'] ?? '') ?: null;
 
-        // LGPD: auto-data de aceite ao marcar consentimento
-        $lgpdConsent = isset($_POST['lgpd_consentimento']) ? 1 : 0;
-        $lgpdData    = null;
-        if ($lgpdConsent) {
-            $lgpdData = !empty($_POST['lgpd_data_aceite'])
-                ? $_POST['lgpd_data_aceite']
-                : date('Y-m-d H:i:s');
+        // LGPD: upload do termo escaneado
+        $lgpdDocumento = $editando ? ($paciente['lgpd_documento'] ?? null) : null;
+
+        if (!empty($_FILES['lgpd_documento']['name'])) {
+            $file     = $_FILES['lgpd_documento'];
+            $extAllow = ['pdf','jpg','jpeg','png'];
+            $ext      = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $maxSize  = 10 * 1024 * 1024; // 10 MB
+
+            if (!in_array($ext, $extAllow)) {
+                $erros[] = 'Arquivo LGPD: apenas PDF, JPG ou PNG são aceitos.';
+                $tabAtiva = 'tab8';
+            } elseif ($file['size'] > $maxSize) {
+                $erros[] = 'Arquivo LGPD: tamanho máximo permitido é 10 MB.';
+                $tabAtiva = 'tab8';
+            } elseif ($file['error'] !== UPLOAD_ERR_OK) {
+                $erros[] = 'Erro no upload do arquivo LGPD.';
+                $tabAtiva = 'tab8';
+            } else {
+                $novoNome = 'lgpd_' . ($id ?: 'novo') . '_' . time() . '.' . $ext;
+                $destino  = __DIR__ . '/uploads/lgpd/' . $novoNome;
+                if (move_uploaded_file($file['tmp_name'], $destino)) {
+                    // Remove arquivo anterior se existir
+                    if ($lgpdDocumento && file_exists(__DIR__ . '/uploads/lgpd/' . $lgpdDocumento)) {
+                        unlink(__DIR__ . '/uploads/lgpd/' . $lgpdDocumento);
+                    }
+                    $lgpdDocumento = $novoNome;
+                } else {
+                    $erros[] = 'Não foi possível salvar o arquivo. Verifique as permissões da pasta uploads/lgpd/';
+                    $tabAtiva = 'tab8';
+                }
+            }
+        }
+
+        // Se houver documento anexado, marca consentimento automaticamente
+        $lgpdConsent = $lgpdDocumento ? 1 : 0;
+        $lgpdData    = $lgpdConsent ? date('Y-m-d H:i:s') : null;
+        if ($editando && !empty($paciente['lgpd_data_aceite'])) {
+            $lgpdData = $paciente['lgpd_data_aceite']; // preserva data original
         }
 
         $dados = [
@@ -116,12 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'cadastrado_por'           => $editando ? ($paciente['cadastrado_por'] ?? null) : (int)$_SESSION['usuario_id'],
             // Tab 8
             'lgpd_consentimento'       => $lgpdConsent,
-            'lgpd_whatsapp'            => isset($_POST['lgpd_whatsapp'])      ? 1 : 0,
-            'lgpd_sms'                 => isset($_POST['lgpd_sms'])           ? 1 : 0,
-            'lgpd_email_consent'       => isset($_POST['lgpd_email_consent']) ? 1 : 0,
+            'lgpd_whatsapp'            => 0,
+            'lgpd_sms'                 => 0,
+            'lgpd_email_consent'       => 0,
             'lgpd_data_aceite'         => $lgpdData,
             'lgpd_responsavel_aceite'  => trim($_POST['lgpd_responsavel_aceite'] ?? '') ?: null,
-            'lgpd_finalidade'          => trim($_POST['lgpd_finalidade']         ?? '') ?: null,
+            'lgpd_finalidade'          => null,
+            'lgpd_documento'           => $lgpdDocumento,
         ];
 
         try {
@@ -229,7 +262,7 @@ $ufs    = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA'
             <div class="alert alert-danger"><?= implode('<br>', $erros) ?></div>
             <?php endif; ?>
 
-            <form method="POST" id="pacienteForm">
+            <form method="POST" id="pacienteForm" enctype="multipart/form-data">
 
                 <!-- ── Navegação por abas ── -->
                 <div class="tabs-nav" id="tabsNav">
@@ -713,66 +746,90 @@ $ufs    = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA'
                 <div id="tab8" class="tab-pane <?= $tabAtiva === 'tab8' ? 'active' : '' ?>">
                     <div class="tab-content">
 
-                        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:.88rem;color:#1e40af;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+                        <!-- Banner informativo + botão imprimir -->
+                        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
                             <div>
-                                <strong>Lei Geral de Proteção de Dados (LGPD)</strong> — As informações coletadas são utilizadas exclusivamente para a assistência à saúde do paciente, em conformidade com a Lei nº 13.709/2018.
+                                <strong style="color:#1e40af;font-size:.92rem">Lei Geral de Proteção de Dados (LGPD) — Lei nº 13.709/2018</strong><br>
+                                <span style="font-size:.82rem;color:#3b82f6">Imprima o termo, colha a assinatura do paciente e anexe o documento escaneado abaixo.</span>
                             </div>
                             <?php if ($editando): ?>
                             <a href="paciente_lgpd_termo.php?id=<?= $id ?>" target="_blank"
-                               style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#1a6fb5;color:#fff;border-radius:8px;text-decoration:none;font-size:.82rem;font-weight:600;white-space:nowrap;flex-shrink:0">
-                                <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                               style="display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:#1a6fb5;color:#fff;border-radius:9px;text-decoration:none;font-size:.88rem;font-weight:600;white-space:nowrap;flex-shrink:0;border:none">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                                 Imprimir Termo LGPD
                             </a>
+                            <?php else: ?>
+                            <span style="font-size:.8rem;color:#6b7280;font-style:italic">Salve o paciente primeiro para imprimir o termo.</span>
                             <?php endif; ?>
                         </div>
 
-                        <div class="lgpd-checks">
-                            <label class="lgpd-item">
-                                <input type="checkbox" name="lgpd_consentimento" id="lgpdConsent" value="1" <?= fc('lgpd_consentimento') ? 'checked' : '' ?>>
-                                <div>
-                                    <strong>Consentimento para tratamento de dados</strong>
-                                    <span>Autorizo o tratamento dos meus dados pessoais e de saúde para fins assistenciais.</span>
+                        <!-- Passo a passo visual -->
+                        <div style="display:flex;gap:0;margin-bottom:28px;overflow-x:auto">
+                            <?php
+                            $docAtual = $editando ? ($paciente['lgpd_documento'] ?? null) : null;
+                            $steps = [
+                                ['num'=>'1','label'=>'Imprimir','desc'=>'Gere o termo clicando no botão acima','done'=> $editando],
+                                ['num'=>'2','label'=>'Assinar','desc'=>'Paciente ou responsável assina o documento','done'=> (bool)$docAtual],
+                                ['num'=>'3','label'=>'Escanear','desc'=>'Digitalize o termo assinado (PDF, JPG ou PNG)','done'=> (bool)$docAtual],
+                                ['num'=>'4','label'=>'Anexar','desc'=>'Faça o upload do arquivo escaneado abaixo','done'=> (bool)$docAtual],
+                            ];
+                            foreach ($steps as $i => $s):
+                                $cor = $s['done'] ? '#1a6fb5' : '#94a3b8';
+                                $bg  = $s['done'] ? '#eff6ff' : '#f8fafc';
+                            ?>
+                            <div style="flex:1;min-width:120px;text-align:center;padding:14px 10px;background:<?= $bg ?>;border:1.5px solid <?= $s['done'] ? '#bfdbfe' : '#e2e8f0' ?>;<?= $i===0?'border-radius:10px 0 0 10px':'' ?><?= $i===3?'border-radius:0 10px 10px 0':'' ?>;border-left:<?= $i>0?'none':'1.5px solid '.($s['done']?'#bfdbfe':'#e2e8f0') ?>">
+                                <div style="width:32px;height:32px;border-radius:50%;background:<?= $cor ?>;color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;margin:0 auto 6px">
+                                    <?= $s['done'] ? '✓' : $s['num'] ?>
                                 </div>
-                            </label>
-                            <label class="lgpd-item">
-                                <input type="checkbox" name="lgpd_whatsapp" value="1" <?= fc('lgpd_whatsapp') ? 'checked' : '' ?>>
-                                <div>
-                                    <strong>Contato via WhatsApp</strong>
-                                    <span>Autorizo o envio de lembretes e comunicações via WhatsApp.</span>
-                                </div>
-                            </label>
-                            <label class="lgpd-item">
-                                <input type="checkbox" name="lgpd_sms" value="1" <?= fc('lgpd_sms') ? 'checked' : '' ?>>
-                                <div>
-                                    <strong>Contato via SMS</strong>
-                                    <span>Autorizo o envio de mensagens SMS.</span>
-                                </div>
-                            </label>
-                            <label class="lgpd-item">
-                                <input type="checkbox" name="lgpd_email_consent" value="1" <?= fc('lgpd_email_consent') ? 'checked' : '' ?>>
-                                <div>
-                                    <strong>Contato via e-mail</strong>
-                                    <span>Autorizo o envio de comunicações por e-mail.</span>
-                                </div>
-                            </label>
+                                <div style="font-size:.8rem;font-weight:700;color:<?= $cor ?>"><?= $s['label'] ?></div>
+                                <div style="font-size:.72rem;color:#64748b;margin-top:3px"><?= $s['desc'] ?></div>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
 
-                        <div class="form-grid-2" style="margin-top:20px">
-                            <div class="form-group">
-                                <label for="lgpd_data_aceite">Data e hora do aceite</label>
-                                <input type="datetime-local" id="lgpd_data_aceite" name="lgpd_data_aceite"
-                                       value="<?= htmlspecialchars(str_replace(' ', 'T', fv('lgpd_data_aceite'))) ?>">
+                        <!-- Documento atual -->
+                        <?php if ($docAtual): ?>
+                        <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
+                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="#166534" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>
+                            <div style="flex:1">
+                                <div style="font-size:.88rem;font-weight:700;color:#166534">Termo LGPD anexado</div>
+                                <div style="font-size:.78rem;color:#4b5563;margin-top:2px"><?= htmlspecialchars($docAtual) ?></div>
                             </div>
-                            <div class="form-group">
-                                <label for="lgpd_responsavel_aceite">Responsável pelo aceite</label>
-                                <input type="text" id="lgpd_responsavel_aceite" name="lgpd_responsavel_aceite" maxlength="200"
-                                       value="<?= htmlspecialchars(fv('lgpd_responsavel_aceite')) ?>">
+                            <a href="uploads/lgpd/<?= urlencode($docAtual) ?>" target="_blank"
+                               style="padding:7px 14px;background:#166534;color:#fff;border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:600;white-space:nowrap">
+                                Visualizar
+                            </a>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Upload -->
+                        <div class="form-group">
+                            <label for="lgpd_documento">
+                                <?= $docAtual ? 'Substituir documento anexado' : 'Anexar termo assinado' ?>
+                            </label>
+                            <div style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;background:#f8fafc;transition:border-color .2s" id="dropZone">
+                                <svg viewBox="0 0 24 24" width="36" height="36" stroke="#94a3b8" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 10px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <p style="font-size:.88rem;color:#64748b;margin-bottom:10px">
+                                    Arraste o arquivo aqui ou clique para selecionar
+                                </p>
+                                <p style="font-size:.76rem;color:#94a3b8;margin-bottom:14px">PDF, JPG ou PNG — máximo 10 MB</p>
+                                <input type="file" id="lgpd_documento" name="lgpd_documento"
+                                       accept=".pdf,.jpg,.jpeg,.png"
+                                       style="display:none">
+                                <button type="button" onclick="document.getElementById('lgpd_documento').click()"
+                                        class="btn btn-ghost" style="font-size:.82rem">
+                                    Selecionar arquivo
+                                </button>
+                                <div id="filePreview" style="margin-top:12px;font-size:.82rem;color:#1a6fb5;font-weight:600;display:none"></div>
                             </div>
-                            <div class="form-group full-width">
-                                <label for="lgpd_finalidade">Finalidade do uso dos dados</label>
-                                <textarea id="lgpd_finalidade" name="lgpd_finalidade" rows="3" class="form-textarea"
-                                          placeholder="Ex: Identificação do paciente, agendamento de consultas, envio de resultados..."><?= htmlspecialchars(fv('lgpd_finalidade')) ?></textarea>
-                            </div>
+                        </div>
+
+                        <!-- Responsável pelo aceite -->
+                        <div class="form-group" style="max-width:420px">
+                            <label for="lgpd_responsavel_aceite">Responsável pelo aceite / coleta da assinatura</label>
+                            <input type="text" id="lgpd_responsavel_aceite" name="lgpd_responsavel_aceite" maxlength="200"
+                                   placeholder="Nome do atendente que coletou a assinatura"
+                                   value="<?= htmlspecialchars(fv('lgpd_responsavel_aceite')) ?>">
                         </div>
 
                         <div class="tab-footer">
@@ -891,6 +948,57 @@ document.getElementById('lgpdConsent').addEventListener('change', function () {
     }
 });
 
+// ── Upload LGPD: preview e drag-and-drop ────────────────────
+const fileInput   = document.getElementById('lgpd_documento');
+const dropZone    = document.getElementById('dropZone');
+const filePreview = document.getElementById('filePreview');
+
+if (fileInput) {
+    fileInput.addEventListener('change', function () {
+        if (this.files.length) showFile(this.files[0]);
+    });
+
+    dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--primary)';
+        dropZone.style.background  = 'var(--primary-light)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = '';
+        dropZone.style.background  = '';
+    });
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.style.borderColor = '';
+        dropZone.style.background  = '';
+        const dt = e.dataTransfer;
+        if (dt.files.length) {
+            fileInput.files = dt.files;
+            showFile(dt.files[0]);
+        }
+    });
+}
+
+function showFile(file) {
+    const maxMB = 10;
+    const allow = ['application/pdf','image/jpeg','image/png'];
+    if (!allow.includes(file.type)) {
+        filePreview.style.display = 'block';
+        filePreview.style.color   = 'var(--danger)';
+        filePreview.textContent   = '✗ Tipo não permitido. Use PDF, JPG ou PNG.';
+        return;
+    }
+    if (file.size > maxMB * 1024 * 1024) {
+        filePreview.style.display = 'block';
+        filePreview.style.color   = 'var(--danger)';
+        filePreview.textContent   = '✗ Arquivo muito grande (máx. ' + maxMB + ' MB).';
+        return;
+    }
+    filePreview.style.display = 'block';
+    filePreview.style.color   = 'var(--primary)';
+    filePreview.textContent   = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+    dropZone.style.borderColor = 'var(--primary)';
+}
 // ── Gestante: só exibe se sexo biológico = F ─────────────────
 function toggleGestante() {
     const sexo = document.getElementById('sexo_biologico').value;
