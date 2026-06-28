@@ -77,6 +77,52 @@ html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; backg
     padding: 18px 20px 6px;
 }
 
+/* Versão clicável (botão toggle de grupo) */
+button.nav-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 18px 20px 6px;
+    transition: color .15s;
+}
+button.nav-section:hover { color: rgba(255,255,255,.6); }
+
+.nav-section-arrow {
+    width: 13px; height: 13px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+    transition: transform .22s ease;
+}
+button.nav-section[aria-expanded="false"] .nav-section-arrow {
+    transform: rotate(-90deg);
+}
+
+/* Grupos colapsáveis */
+.nav-group {
+    overflow: hidden;
+    max-height: 600px;
+    transition: max-height .28s ease, opacity .22s ease;
+    opacity: 1;
+}
+.nav-group.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* No modo colapsado (só ícones) os grupos ficam sempre visíveis */
+.sidebar-collapsed .sidebar .nav-group {
+    max-height: 600px !important;
+    opacity: 1 !important;
+}
+.sidebar-collapsed .sidebar button.nav-section .nav-section-arrow {
+    display: none;
+}
+
 .sidebar-nav a {
     display: flex;
     align-items: center;
