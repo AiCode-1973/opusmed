@@ -84,19 +84,7 @@
         </a>
         <?php endif; ?>
 
-        <?php if (!empty($permissoes['Usuários']['pode_ver'])): ?>
-        <a href="usuarios.php" data-label="Usuários" <?= in_array(basename($_SERVER['PHP_SELF']), ['usuarios.php','usuario_form.php','usuario_senha.php']) ? 'class="active"' : '' ?>>
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Usuários</span>
-        </a>
-        <?php endif; ?>
-
-        <?php if (!empty($permissoes['Configurações']['pode_ver'])): ?>
-        <a href="perfis.php" data-label="Perfis" <?= in_array(basename($_SERVER['PHP_SELF']), ['perfis.php','perfil_form.php']) ? 'class="active"' : '' ?>>
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-            <span>Perfis</span>
-        </a>
-        <?php endif; ?>
+        <span class="nav-section">Cadastros</span>
 
         <?php if (!empty($permissoes['Convênios']['pode_ver'])): ?>
         <a href="convenios.php" data-label="Convênios" <?= in_array(basename($_SERVER['PHP_SELF']), ['convenios.php','convenio_form.php']) ? 'class="active"' : '' ?>>
@@ -113,9 +101,25 @@
         <?php endif; ?>
 
         <?php if (!empty($permissoes['Categorias de Setores']['pode_ver'])): ?>
-        <a href="categorias_setor.php" data-label="Categorias de Setores" <?= in_array(basename($_SERVER['PHP_SELF']), ['categorias_setor.php','categoria_setor_form.php','categoria_setor_excluir.php']) ? 'class="active"' : '' ?>>
+        <a href="categorias_setor.php" data-label="Categ. Setores" <?= in_array(basename($_SERVER['PHP_SELF']), ['categorias_setor.php','categoria_setor_form.php','categoria_setor_excluir.php']) ? 'class="active"' : '' ?>>
             <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
             <span>Categ. Setores</span>
+        </a>
+        <?php endif; ?>
+
+        <span class="nav-section">Sistema</span>
+
+        <?php if (!empty($permissoes['Usuários']['pode_ver'])): ?>
+        <a href="usuarios.php" data-label="Usuários" <?= in_array(basename($_SERVER['PHP_SELF']), ['usuarios.php','usuario_form.php','usuario_senha.php']) ? 'class="active"' : '' ?>>
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Usuários</span>
+        </a>
+        <?php endif; ?>
+
+        <?php if (!empty($permissoes['Configurações']['pode_ver'])): ?>
+        <a href="perfis.php" data-label="Perfis" <?= in_array(basename($_SERVER['PHP_SELF']), ['perfis.php','perfil_form.php']) ? 'class="active"' : '' ?>>
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <span>Perfis</span>
         </a>
         <?php endif; ?>
 
