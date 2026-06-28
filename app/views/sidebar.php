@@ -20,7 +20,7 @@
         <?php
         $page = basename($_SERVER['PHP_SELF']);
         $activeGroups = [];
-        if (in_array($page, ['dashboard.php','pacientes.php','paciente_form.php','paciente_excluir.php','agendamento.php','prontuario.php','internacao.php'])) $activeGroups[] = 'principal';
+        if (in_array($page, ['dashboard.php','pacientes.php','paciente_form.php','paciente_excluir.php','medicos.php','medico_form.php','medico_excluir.php','agendamento.php','prontuario.php','internacao.php'])) $activeGroups[] = 'principal';
         if (in_array($page, ['farmacia.php','laboratorio.php'])) $activeGroups[] = 'clinico';
         if (in_array($page, ['financeiro.php','relatorios.php'])) $activeGroups[] = 'gestao';
         if (in_array($page, ['convenios.php','convenio_form.php','setores.php','setor_form.php','setor_excluir.php','categorias_setor.php','categoria_setor_form.php','categoria_setor_excluir.php'])) $activeGroups[] = 'cadastros';
@@ -41,6 +41,12 @@
             <a href="pacientes.php" data-label="Pacientes" <?= in_array($page, ['pacientes.php','paciente_form.php','paciente_excluir.php']) ? 'class="active"' : '' ?>>
                 <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span>Pacientes</span>
+            </a>
+            <?php endif; ?>
+            <?php if (!empty($permissoes['Médicos']['pode_ver'])): ?>
+            <a href="medicos.php" data-label="Médicos" <?= in_array($page, ['medicos.php','medico_form.php','medico_excluir.php']) ? 'class="active"' : '' ?>>
+                <svg viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <span>Médicos</span>
             </a>
             <?php endif; ?>
             <?php if (!empty($permissoes['Agendamento']['pode_ver'])): ?>
