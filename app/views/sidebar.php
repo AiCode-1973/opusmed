@@ -23,7 +23,7 @@
         if (in_array($page, ['dashboard.php','pacientes.php','paciente_form.php','paciente_excluir.php','medicos.php','medico_form.php','medico_excluir.php','agendamento.php','prontuario.php','internacao.php'])) $activeGroups[] = 'principal';
         if (in_array($page, ['farmacia.php','laboratorio.php'])) $activeGroups[] = 'clinico';
         if (in_array($page, ['financeiro.php','relatorios.php'])) $activeGroups[] = 'gestao';
-        if (in_array($page, ['convenios.php','convenio_form.php','setores.php','setor_form.php','setor_excluir.php','categorias_setor.php','categoria_setor_form.php','categoria_setor_excluir.php'])) $activeGroups[] = 'cadastros';
+        if (in_array($page, ['convenios.php','convenio_form.php','setores.php','setor_form.php','setor_excluir.php','categorias_setor.php','categoria_setor_form.php','categoria_setor_excluir.php','especialidades.php','especialidade_form.php','especialidade_excluir.php'])) $activeGroups[] = 'cadastros';
         if (in_array($page, ['usuarios.php','usuario_form.php','usuario_senha.php','perfis.php','perfil_form.php','configuracoes.php'])) $activeGroups[] = 'sistema';
         ?>
 
@@ -131,6 +131,12 @@
             <a href="categorias_setor.php" data-label="Categ. Setores" <?= in_array($page, ['categorias_setor.php','categoria_setor_form.php','categoria_setor_excluir.php']) ? 'class="active"' : '' ?>>
                 <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                 <span>Categ. Setores</span>
+            </a>
+            <?php endif; ?>
+            <?php if (!empty($permissoes['Especialidades']['pode_ver'])): ?>
+            <a href="especialidades.php" data-label="Especialidades" <?= in_array($page, ['especialidades.php','especialidade_form.php','especialidade_excluir.php']) ? 'class="active"' : '' ?>>
+                <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <span>Especialidades</span>
             </a>
             <?php endif; ?>
         </div>
