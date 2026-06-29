@@ -127,9 +127,9 @@ if (!$editando && !isset($_POST['ativo'])) {
                             </label>
                             <input type="text" name="codigo_cbos"
                                    value="<?= htmlspecialchars($v['codigo_cbos']) ?>"
-                                   placeholder="Ex.: 2251-10"
-                                   maxlength="10"
-                                   style="max-width:200px">
+                                   placeholder="Ex.: 2231.01 / 225105"
+                                   maxlength="35"
+                                   style="max-width:280px">
                         </div>
 
                         <div class="form-group">
